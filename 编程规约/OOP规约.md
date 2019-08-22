@@ -1,7 +1,7 @@
 ### （四）OOP规约
 1. <font color="#BE0712">【强制】</font>避免通过一个类的对象引用访问此类的静态变量或静态方法，无谓增加编译器解析成本，直接用类名来访问即可。
 
-2. <font color="#BE0712">【强制】</font>所有的覆写方法，必须加@Override注解。   
+2. <font color="#BE0712">【强制】</font>所有的覆写方法，必须加 @Override 注解。   
 <font color="#967b18">说明:</font> getObject() 与 get0bject()的问题。一个是字母的 O，一个是数字的 0，加 @Override 可以准确判 断是否覆盖成功。另外，如果在抽象类中对方法签名进行修改，其实现类会马上编译报错。
 
 3. <font color="#BE0712">【强制】</font>相同参数类型，相同业务含义，才可以使用 Java 的可变参数，避免使用 Object。     
@@ -21,8 +21,8 @@
 7. <font color="#BE0712">【强制】</font>所有整型包装类对象之间值的比较，全部使用 equals 方法比较。   
 <font color="#967b18">说明:</font> 对于 Integer var = ? 在-128 至 127 范围内的赋值，Integer 对象是在 IntegerCache.cache 产生，会复用已有对象，这个区间内的 Integer 值可以直接使用 == 进行判断，但是这个区间之外的所有数据，都会在堆上产生，并不会复用已有对象，这是一个大坑，推荐使用 equals 方法进行判断。
 
-8. <font color="#BE0712">【强制】</font>浮点数之间的等值判断，基本数据类型不能用 == 来比较，包装数据类型不能用 equals 来判断。
-<font color="#967b18">说明:</font> 浮点数采用“尾数+阶码”的编码方式，类似于科学计数法的“有效数字+指数”的表示方式。二进制无法精确表示大部分的十进制小数，具体原理参考《码出高效》。
+8. <font color="#BE0712">【强制】</font>浮点数之间的等值判断，基本数据类型不能用 == 来比较，包装数据类型不能用 equals 来判断。  
+<font color="#967b18">说明:</font> 浮点数采用“尾数+阶码”的编码方式，类似于科学计数法的“有效数字+指数”的表示方式。二进制无法精确表示大部分的十进制小数，具体原理参考《码出高效》。  
 <font color="#fc471e">反例:</font>
  ``` java 
     float a = 1.0f - 0.9f; 
@@ -36,7 +36,7 @@
         // 预期进入此代码快，执行其它业务逻辑 // 但事实上 equals 的结果为 false
     }
 ```
-<font color="#15975A">正例:</font>
+<font color="#15975A">正例:</font>  
 (1) 指定一个误差范围，两个浮点数的差值在此范围之内，则认为是相等的。
 ``` java
     float a = 1.0f - 0.9f; 
@@ -57,7 +57,7 @@
         System.out.println("true");
     }
 ```
-9. <font color="#BE0712">【强制】</font>定义数据对象DO类时，属性类型要与数据库字段类型相匹配。   
+9. <font color="#BE0712">【强制】</font>定义数据对象 DO 类时，属性类型要与数据库字段类型相匹配。   
 <font color="#15975A">正例:</font> 数据库字段的 bigint 必须与类属性的 Long 类型相对应。   
 <font color="#fc471e">反例:</font> 某个案例的数据库表 id 字段定义类型 bigint unsigned，实际类对象属性为 Integer，随着 id 越来越大，超过 Integer 的表示范围而溢出成为负数。
 
@@ -72,22 +72,23 @@ BigDecimal recommend2 = BigDecimal.valueOf(0.1);
 1) <font color="#BE0712">【强制】</font>所有的 POJO 类属性必须使用包装数据类型。  
 2) <font color="#BE0712">【强制】</font>RPC 方法的返回值和参数必须使用包装数据类型。   
 3) <font color="#fdbf2d">【推荐】</font>所有的局部变量使用基本数据类型。  
-<font color="#967b18">说明:</font> POJO 类属性没有初值是提醒使用者在需要使用时，必须自己显式地进行赋值，任何 NPE 问题，或 者入库检查，都由使用者来保证。  
+<font color="#967b18">说明:</font> POJO 类属性没有初值是提醒使用者在需要使用时，必须自己显式地进行赋值，任何 NPE 问题，或者入库检查，都由使用者来保证。  
 <font color="#15975A">正例:</font> 数据库的查询结果可能是 null，因为自动拆箱，用基本数据类型接收有 NPE 风险。   
 <font color="#fc471e">反例:</font> 比如显示成交总额涨跌情况，即正负 x%，x 为基本数据类型，调用的 RPC 服务，调用不成功时， 返回的是默认值，页面显示为 0%，这是不合理的，应该显示成中划线。所以包装数据类型的 null 值，能够表示额外的信息，如:远程调用失败，异常退出。
 
 12. <font color="#BE0712">【强制】</font>定义 DO/DTO/VO 等 POJO 类时，不要设定任何属性默认值。  
 <font color="#fc471e">反例:</font> POJO 类的 createTime 默认值为 new Date()，但是这个属性在数据提取时并没有置入具体值，在更新其它字段时又附带更新了此字段，导致创建时间被修改成当前时间。
 
-13. <font color="#BE0712">【强制】</font>序列化类新增属性时，请不要修改 serialVersionUID 字段，避免反序列失败;如果完全不兼容升级，避免反序列化混乱，那么请修改 serialVersionUID 值。
+13. <font color="#BE0712">【强制】</font>序列化类新增属性时，请不要修改 serialVersionUID 字段，避免反序列失败;如果完全不兼容升级，避免反序列化混乱，那么请修改 serialVersionUID 值。  
 <font color="#967b18">说明:</font> 注意 serialVersionUID 不一致会抛出序列化运行时异常。
 
 14. <font color="#BE0712">【强制】</font>构造方法里面禁止加入任何业务逻辑，如果有初始化逻辑，请放在 init 方法中。
 
-15. <font color="#BE0712">【强制】</font>POJO 类必须写 toString 方法。使用 IDE 中的工具:source> generate toString 时，如果继承了另一个 POJO 类，注意在前面加一下 super.toString。 <font color="#967b18">说明:</font>在方法执行抛出异常时，可以直接调用 POJO 的 toString()方法打印其属性值，便于排查问题。
+15. <font color="#BE0712">【强制】</font>POJO 类必须写 toString 方法。使用 IDE 中的工具:source> generate toString 时，如果继承了另一个 POJO 类，注意在前面加一下 super.toString。   
+<font color="#967b18">说明:</font> 在方法执行抛出异常时，可以直接调用 POJO 的 toString()方法打印其属性值，便于排查问题。
 
 16.  <font color="#BE0712">【强制】</font>禁止在 POJO 类中，同时存在对应属性 xxx 的 isXxx() 和 getXxx() 方法。   
-说明：框架在调用属性 xxx 的提取方法时，并不能去定哪个方法一定时被优先调用到。
+<font color="#967b18">说明:</font> 框架在调用属性 xxx 的提取方法时，并不能去定哪个方法一定时被优先调用到。
 
 17. <font color="#fdbf2d">【推荐】</font>使用索引访问用 String 的 split 方法得到的数组时，需做最后一个分隔符后有无内容的检查，否则会有抛 IndexOutOfBoundsException 的风险。   
 <font color="#967b18">说明:</font>
@@ -116,7 +117,7 @@ System.out.println(ary.length);
 ```
 
 21. <font color="#fdbf2d">【推荐】</font>循环体内，字符串的连接方式，使用 StringBuilder 的 append 方法进行扩展。    
-<font color="#967b18">说明:</font> 下例中，反编译出的字节码文件显示每次循环都会 new 出一个 StringBuilder 对象，然后进行 append 操作，最后通过 toString 方法返回 String 对象，造成内存资源浪费。
+<font color="#967b18">说明:</font> 下例中，反编译出的字节码文件显示每次循环都会 new 出一个 StringBuilder 对象，然后进行 append 操作，最后通过 toString 方法返回 String 对象，造成内存资源浪费。  
 <font color="#fc471e">反例:</font>
 ``` java
     String str = "start";
@@ -131,7 +132,7 @@ System.out.println(ary.length);
 4) 不允许运行过程中重新赋值的局部变量。   
 5) 避免上下文重复使用一个变量，使用 final 可以强制重新定义一个变量，方便更好地进行重构。   
 
-23. <font color="#fdbf2d">【推荐】</font>慎用 Object 的 clone 方法来拷贝对象。
+23. <font color="#fdbf2d">【推荐】</font>慎用 Object 的 clone 方法来拷贝对象。  
 <font color="#967b18">说明:</font> 对象 clone 方法默认是浅拷贝，若想实现深拷贝需覆写 clone 方法实现域对象的深度遍历式拷贝。
 
 24. <font color="#fdbf2d">【推荐】</font>类成员与方法访问控制从严:  
@@ -144,4 +145,4 @@ System.out.println(ary.length);
 7) 类成员方法只供类内部调用，必须是 private。  
 8) 类成员方法只对继承类公开，那么限制为 protected。  
 <font color="#967b18">说明:</font> 任何类、方法、参数、变量，严控访问范围。过于宽泛的访问范围，不利于模块解耦。  
-思考:如果是一个 private 的方法，想删除就删除，可是一个 public 的 service 成员方法或成员变量，删除一下，不得手心冒点汗吗?变量像自己的小孩，尽量在自己的视线内，变量作用域太大，无限制的到处跑，那么你会担心的。
+<font color=green>思考:</font> 如果是一个 private 的方法，想删除就删除，可是一个 public 的 service 成员方法或成员变量，删除一下，不得手心冒点汗吗?变量像自己的小孩，尽量在自己的视线内，变量作用域太大，无限制的到处跑，那么你会担心的。
